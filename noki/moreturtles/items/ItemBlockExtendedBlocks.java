@@ -4,6 +4,8 @@ import net.minecraft.block.Block;
 import net.minecraft.item.EnumRarity;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import noki.moreturtles.blocks.BlockExtendedBlocks;
 import noki.moreturtles.blocks.RegisterBlocks;
 
@@ -60,6 +62,14 @@ public class ItemBlockExtendedBlocks extends ItemBlock {
 		default:
 			return EnumRarity.COMMON;	
 		}
+		
+	}
+	
+	@Override
+	@SideOnly(Side.CLIENT)
+	public int getColorFromItemStack(ItemStack stack, int renderPass) {
+		
+		return RegisterBlocks.extendedBlocks.getRenderColor(null);
 		
 	}
 	

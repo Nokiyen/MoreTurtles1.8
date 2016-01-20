@@ -13,6 +13,8 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.model.IBakedModel;
 import net.minecraft.entity.passive.EntityAnimal;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import noki.moreturtles.MoreTurtlesData;
 import noki.moreturtles.items.ItemExtendedItems;
 import noki.moreturtles.items.RegisterItems;
@@ -81,6 +83,7 @@ public class ToolFeeding implements ITurtleUpgrade {
 	}
 	
 	@SuppressWarnings("deprecation")
+	@SideOnly(Side.CLIENT)
 	@Override
 	public Pair<IBakedModel, Matrix4f> getModel(ITurtleAccess turtle, TurtleSide side) {
 		

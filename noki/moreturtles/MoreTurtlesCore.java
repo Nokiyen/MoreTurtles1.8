@@ -1,12 +1,17 @@
 package noki.moreturtles;
 
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.ModMetadata;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.Mod.Instance;
+import net.minecraftforge.fml.common.Mod.Metadata;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
+import net.minecraftforge.fml.relauncher.Side;
 import noki.moreturtles.blocks.RegisterBlocks;
 import noki.moreturtles.event.RegisterEvents;
 import noki.moreturtles.items.RegisterItems;
@@ -25,27 +30,35 @@ import noki.moreturtles.turtle.common.RegisterTurtles;
  * @caution ここはコアファイルなので、原則、具体的な処理をしないよう気を付ける。
  * @caution_en Here is Core. So, don't write any too detail and complex code.
  */
-@Mod(modid = ModInfo.ID, name = ModInfo.NAME, version = ModInfo.VERSION, dependencies = ModInfo.DEPENDENCY)
+@Mod(modid = ModInfo.ID, name = ModInfo.NAME, version = ModInfo.VERSION,
+	dependencies = ModInfo.DEPENDENCY, acceptedMinecraftVersions = ModInfo.MC_VERSIONS)
 public class MoreTurtlesCore {
 	
 	//******************************//
 	// define member variables.
 	//******************************//
-	@Instance(value = "MoreTurtles")
+	@Instance(value = ModInfo.ID)
 	public static MoreTurtlesCore instance;
+	@Metadata
+	public static ModMetadata metadata;	//	extract from mcmod.info file, not java internal coding.
 	@SidedProxy(clientSide = ModInfo.PROXY_LOCATION + "ProxyClient", serverSide = ModInfo.PROXY_LOCATION + "ProxyServer")
 	public static ProxyCommon proxy;
-
+	
+	public static VersionInfo versionInfo;
+	
 	
 	//******************************//
 	// define member methods.
 	//******************************//
+	@SuppressWarnings("deprecation")
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent event) {
 
 		MoreTurtlesData.getDataPre(event);
 		RegisterItems.registerPre();
 		RegisterBlocks.registerPre();
+		
+		versionInfo = new VersionInfo(metadata.modId.toLowerCase(), metadata.version, metadata.updateUrl);
 		
 	}
 	
@@ -60,10 +73,19 @@ public class MoreTurtlesCore {
 		RegisterEvents.register();
 		proxy.registerSidedEvent();
 		
+		MinecraftForge.EVENT_BUS.register(versionInfo);
+		
 	}
 	
 	@EventHandler
 	public void postInit(FMLPostInitializationEvent event) {
+		
+	}
+	
+	@EventHandler
+	public void onServerStart(FMLServerStartingEvent event) {
+		
+		versionInfo.notifyUpdate(Side.SERVER);
 		
 	}
 	

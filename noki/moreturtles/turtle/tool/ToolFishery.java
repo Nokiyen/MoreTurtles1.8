@@ -1,7 +1,7 @@
 package noki.moreturtles.turtle.tool;
 
+import java.util.HashMap;
 import javax.vecmath.Matrix4f;
-
 import org.apache.commons.lang3.tuple.Pair;
 
 import net.minecraft.block.state.IBlockState;
@@ -42,12 +42,10 @@ public class ToolFishery implements ITurtleUpgrade {
 	private int upgradeMeta = 5;
 	private ItemStack upgradeItem = new ItemStack(RegisterItems.extendedItems, 1, this.upgradeMeta);
 	
-	private boolean start = false;
-	private EnumFacing direction = null;
-	private long startTime;
-	
 	private int luckLevel = 0;
 	private int addedFuelLevel = 0;
+	
+	private HashMap<BlockPos, FisheryInfo> infoList = new HashMap<BlockPos, FisheryInfo>();
 	
 	
 	//******************************//
@@ -127,26 +125,32 @@ public class ToolFishery implements ITurtleUpgrade {
 
 	private TurtleCommandResult dig(MTTurtleAccess turtle, EnumFacing dir) {
 		
-		if(this.start == false) {
-			this.direction = null;//reset.
-			this.startTime = 0;//reset.
+		FisheryInfo info = this.infoList.get(turtle.getPosition());
+		if(info == null) {
+			info = new FisheryInfo(false, null, 0);
+			this.infoList.put(turtle.getPosition(), info);
+		}
+		
+		if(info.start == false) {
+			info.direction = null;//reset.
+			info.startTime = 0;//reset.
 			return MTTurtleAccess.result(false, EFailureReason.NO_CAST);
 		}
-		this.start = false;//reset.
+		info.start = false;//reset.
 		
-		if(this.direction != null && this.direction != dir) {
-			this.direction = null;//reset.
-			this.startTime = 0;//reset.
+		if(info.direction != null && info.direction != dir) {
+			info.direction = null;//reset.
+			info.startTime = 0;//reset.
 			return MTTurtleAccess.result(false, EFailureReason.WRONG_DIR);
 		}
-		this.direction = null;//reset.
+		info.direction = null;//reset.
 		
 		int newX = turtle.posX + dir.getFrontOffsetX();
 		int newY = turtle.posY + dir.getFrontOffsetY();
 		int newZ = turtle.posZ + dir.getFrontOffsetZ();
 		
 		if(this.checkWater(turtle.world, newX, newY, newZ) == 0) {
-			this.startTime = 0;//reset.
+			info.startTime = 0;//reset.
 			return MTTurtleAccess.result(false, EFailureReason.NO_WATER);
 		}
 		
@@ -163,8 +167,8 @@ public class ToolFishery implements ITurtleUpgrade {
 		
 		//calculate the provability about time;
 		long currentTime = turtle.world.getTotalWorldTime();
-		long passedTime = currentTime - this.startTime;
-		this.startTime = 0;//reset.
+		long passedTime = currentTime - info.startTime;
+		info.startTime = 0;//reset.
 		if(passedTime == 0) {
 			return MTTurtleAccess.result(false, EFailureReason.NO_FISH);
 		}
@@ -189,6 +193,12 @@ public class ToolFishery implements ITurtleUpgrade {
 	
 	private TurtleCommandResult attack(MTTurtleAccess turtle, EnumFacing dir) {
 		
+		FisheryInfo info = this.infoList.get(turtle.getPosition());
+		if(info == null) {
+			info = new FisheryInfo(false, null, 0);
+			this.infoList.put(turtle.getPosition(), info);
+		}
+		
 		int newX = turtle.posX + dir.getFrontOffsetX();
 		int newY = turtle.posY + dir.getFrontOffsetY();
 		int newZ = turtle.posZ + dir.getFrontOffsetZ();
@@ -197,9 +207,9 @@ public class ToolFishery implements ITurtleUpgrade {
 			return MTTurtleAccess.result(false, EFailureReason.NO_WATER);
 		}
 		
-		this.start = true;
-		this.direction = dir;
-		this.startTime = turtle.world.getTotalWorldTime();
+		info.start = true;
+		info.direction = dir;
+		info.startTime = turtle.world.getTotalWorldTime();
 
 		return MTTurtleAccess.result(true);
 		
@@ -225,6 +235,20 @@ public class ToolFishery implements ITurtleUpgrade {
 	public void setAddedFuelLevel(int level) {
 		
 		this.addedFuelLevel = level;
+		
+	}
+	
+	private class FisheryInfo {
+		
+		public boolean start = false;
+		public EnumFacing direction = null;
+		public long startTime;
+		
+		public FisheryInfo(boolean start, EnumFacing direction, long startTime) {
+			this.start = start;
+			this.direction = direction;
+			this.startTime = startTime;
+		}
 		
 	}
 	

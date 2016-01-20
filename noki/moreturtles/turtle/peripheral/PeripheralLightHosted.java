@@ -225,6 +225,8 @@ public class PeripheralLightHosted implements IPeripheral {
 		
 		int lightLevel = (int)MathHelper.clamp_double(HelperArgs.getDouble(arguments[0]), 0.0D, 15.0D);
 		this.turtle.world.setLightFor(EnumSkyBlock.BLOCK, this.turtle.getPosition(), lightLevel);
+		this.turtle.world.markBlockRangeForRenderUpdate(
+				this.turtle.getPosition().add(-15, -15, -15), this.turtle.getPosition().add(15, 15, 15));
 		
 		return new Object[] {true};
 		

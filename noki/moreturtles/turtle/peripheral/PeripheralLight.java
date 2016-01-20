@@ -43,9 +43,9 @@ public class PeripheralLight implements ITurtleUpgrade {
 	private ItemStack upgradeItem = new ItemStack(upgradeBlock, 1, upgradeMeta);
 	
 	@SideOnly(Side.CLIENT)
-	public static ModelResourceLocation model_left = new ModelResourceLocation("moreturtles:turtle_light_left", "inventory");
+	public static ModelResourceLocation model_left;
 	@SideOnly(Side.CLIENT)
-	public static ModelResourceLocation model_right = new ModelResourceLocation("moreturtles:turtle_light_right", "inventory");
+	public static ModelResourceLocation model_right;
 	
 	
 	//******************************//
@@ -86,9 +86,21 @@ public class PeripheralLight implements ITurtleUpgrade {
 		
 	}
 	
+	@SideOnly(Side.CLIENT)
+	private void loadModelLocation() {
+		
+		if(model_left == null) {
+			model_left = new ModelResourceLocation("moreturtles:turtle_light_left", "inventory");
+			model_right= new ModelResourceLocation("moreturtles:turtle_light_right", "inventory");
+		}
+		
+	}
+	
 	@SuppressWarnings("deprecation")
 	@SideOnly(Side.CLIENT)
 	public Pair<IBakedModel, Matrix4f> getModel(ITurtleAccess turtle, TurtleSide side) {
+		
+		this.loadModelLocation();
 		
 		Matrix4f transform = null;
 		ModelManager modelManager = Minecraft.getMinecraft().getBlockRendererDispatcher().getBlockModelShapes().getModelManager();

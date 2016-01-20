@@ -12,6 +12,7 @@ import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.client.model.IFlexibleBakedModel;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import noki.moreturtles.MoreTurtlesData;
@@ -43,9 +44,9 @@ public class PeripheralBiome implements ITurtleUpgrade {
 	private ItemStack upgradeItem = new ItemStack(upgradeBlock, 1, upgradeMeta);
 	
 	@SideOnly(Side.CLIENT)
-	public static ModelResourceLocation model_left = new ModelResourceLocation("moreturtles:turtle_biome_left", "inventory");
+	public static ModelResourceLocation model_left;
 	@SideOnly(Side.CLIENT)
-	public static ModelResourceLocation model_right= new ModelResourceLocation("moreturtles:turtle_biome_right", "inventory");
+	public static ModelResourceLocation model_right;
 	
 	
 	//******************************//
@@ -86,9 +87,22 @@ public class PeripheralBiome implements ITurtleUpgrade {
 		
 	}
 	
+	@SideOnly(Side.CLIENT)
+	private void loadModelLocation() {
+		
+		if(model_left == null) {
+			model_left = new ModelResourceLocation("moreturtles:turtle_biome_left", "inventory");
+			model_right= new ModelResourceLocation("moreturtles:turtle_biome_right", "inventory");
+		}
+		
+	}
+	
 	@SuppressWarnings("deprecation")
 	@SideOnly(Side.CLIENT)
+	@Override
 	public Pair<IBakedModel, Matrix4f> getModel(ITurtleAccess turtle, TurtleSide side) {
+		
+		this.loadModelLocation();
 		
 		Matrix4f transform = null;
 		ModelManager modelManager = Minecraft.getMinecraft().getBlockRendererDispatcher().getBlockModelShapes().getModelManager();
@@ -105,7 +119,7 @@ public class PeripheralBiome implements ITurtleUpgrade {
 		return new PeripheralBiomeHosted(turtle, side);
 		
 	}
-	 
+	
 	@Override
 	public TurtleCommandResult useTool(ITurtleAccess turtle, TurtleSide side, TurtleVerb verb, EnumFacing direction) {
 		

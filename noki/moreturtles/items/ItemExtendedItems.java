@@ -3,7 +3,6 @@ package noki.moreturtles.items;
 import java.util.HashMap;
 import java.util.List;
 
-import net.minecraft.block.Block;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -83,6 +82,7 @@ public class ItemExtendedItems extends Item {
 		
 		public int index;
 		public Item item;
+		@SuppressWarnings("unused")
 		public int metadata;
 		public String name;
 		

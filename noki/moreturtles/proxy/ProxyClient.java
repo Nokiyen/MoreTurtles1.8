@@ -7,12 +7,12 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ItemModelMesher;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.client.resources.model.IBakedModel;
 import net.minecraft.client.resources.model.ModelBakery;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.item.Item;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.event.ModelBakeEvent;
+import net.minecraftforge.client.model.IFlexibleBakedModel;
 import net.minecraftforge.client.model.IModel;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -164,8 +164,7 @@ public class ProxyClient implements ProxyCommon {
 						return Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite(location.toString());
 					}
 				};
-				@SuppressWarnings("deprecation")
-				IBakedModel bakedModel = model.bake(model.getDefaultState(), DefaultVertexFormats.BLOCK, function);
+				IFlexibleBakedModel bakedModel = model.bake(model.getDefaultState(), DefaultVertexFormats.BLOCK, function);
 				event.modelRegistry.putObject(new ModelResourceLocation("moreturtles:" + name, "inventory"), bakedModel);
 			}
 			catch(IOException e) {
